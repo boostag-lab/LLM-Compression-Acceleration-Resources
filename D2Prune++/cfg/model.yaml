@@ -1,0 +1,42 @@
+
+# Global configuration YAML with settings and hyperparameters for pruning
+
+
+# base configuration----------------------------------------------------------------------------------------------------
+model:  # (str) path to pre-trained llm directory, i.e. llama-2-13b
+
+## data load-------------------------------------------------------------------------------------------------------------
+cali_dataset: c4 # (str) calibration dataset name. i.e. c4, default
+eval_dataset: wikitext2 # (str) evaluation dataset name. i.e. wikitext2, default
+cali_data_path: # (str) calibration dataset path, local path or huggingface dataset path
+eval_data_path: # (str) evaluation dataset path, local path or huggingface dataset path
+data_cache_dir: ./cache # (str) data cache dir, using cache to load data, saving the data process time
+
+## running log----------------------------------------------------------------------------------------------------------
+output_dir:  # (str) log and results directory, dir: output/llama-2-13b/wanda-sp0.6, files:experiment.log, results.txt
+
+exp_name:  # (str) experiment name, i.e., llama-2-13b_wanda_unstructured_sp0.6 or llama-2-13b wanda 4:8.
+
+
+# pruning configuration-------------------------------------------------------------------------------------------------
+seed: 0  # (int) number of random seed for {torch, numpy}
+nsamples: 128  # (int) number of calibration samples
+sparsity_ratio:  # (float) sparsity ratio for unstructured  pruning
+prune_m: 0 # (int) m value of n:m pruning
+prune_n: 0 # (int) n value of n:m pruning
+sparsity_type: unstructured # (str) sparsity type of pruning
+
+prune_method: d2prune
+
+cache_dir:  # (str) path to llm cache dir
+device: cuda:0 # (str, optional) device to run pruning, i.e. cuda:0
+save_model: # (str) path to save the pruned model.
+
+
+# hyperparams ----------------------------------------------------------------------------------------------------------
+s: 1500. # (float) scaling magnitude value for activations
+r1: 1.  # (float) First-order activation bias term coefficient 1, i.e., $\lambda_1$ ywx
+r2: 0.  # (float) First-order activation bias term coefficient 2, i.e, $\lambda_2$ x^tww^tx
+beta: 1.0 # admm scale parameter, >0.9
+target_layer_names: "['self_attn.k_proj']" # (str(list)) non-weight-update layer
+tasks: "['boolq', 'rte', 'hellaswag', 'winogrande', 'arc_easy', 'arc_challenge', 'openbookqa']"
